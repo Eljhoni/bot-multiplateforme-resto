@@ -1,20 +1,20 @@
 {
   "name": "bot-multiplateforme-resto",
   "version": "1.0.0",
-  "description": "Bot whatsapp + telegram + instagram pour restaurants",
+  "description": "Bot whatsapp + telegram + insta pour resto",
   "main": "index.js",
+  "type": "module",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@whiskeysockets/baileys": "^7.0.0-rc13",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "pino": "^10.3.1",
+    "@whiskeysockets/baileys": "latest",
+    "express": "^4.18.2",
+    "pino": "^8.0.0",
     "qrcode-terminal": "^0.12.0"
-  },
-  "type": "module"
+  }
 }
