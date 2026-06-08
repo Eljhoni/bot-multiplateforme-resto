@@ -43,17 +43,14 @@ async function startBot() {
     const sock = makeWASocket({
         auth: state,
         printQRInTerminal: false,
-        pairingCode: true
+        pairingCode: true,
+        logger: pino({ level: 'silent' })
     });
-    if(!sock.authState.creds.registered) {
-        const code = await sock.requestPairingCode("243901173598");
-        console.log('CODE PAIRING:', code);
-    }
 
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect } = update;
         if(connection === 'close') {
-            const shouldReconnect = (lastDisconnect?.error instanceof Boom)?.output?.statusCode!== DisconnectReason.loggedOut;
+            const shouldReconnect = (lastDisconnect?.error instanceof Boom) && lastDisconnect.error.output.statusCode!== DisconnectReason.loggedOut;
             console.log('Connexion fermée, reconnexion:', shouldReconnect);
             if(shouldReconnect) startBot();
         } else if(connection === 'open') {
@@ -127,4 +124,4 @@ function sauvegarderClients() {
     } catch (e) {
         console.log('Erreur sauvegarde:', e);
     }
-            }
+}
