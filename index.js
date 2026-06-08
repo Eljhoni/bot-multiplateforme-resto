@@ -48,15 +48,21 @@ async function startBot() {
     });
 
     sock.ev.on('connection.update', (update) => {
-        const { connection, lastDisconnect } = update;
-        if(connection === 'close') {
-            const shouldReconnect = (lastDisconnect?.error instanceof Boom) && lastDisconnect.error.output.statusCode!== DisconnectReason.loggedOut;
-            console.log('Connexion fermée, reconnexion:', shouldReconnect);
-            if(shouldReconnect) startBot();
-        } else if(connection === 'open') {
-            console.log('✅ Bot connecté à WhatsApp!');
-        }
-    });
+    const { connection, lastDisconnect, qr, pairingCode } = update;
+    
+    // Affiche le code de pairing
+    if (pairingCode) {
+        console.log('CODE PAIRING:', pairingCode);
+    }
+    
+    if(connection === 'close') {
+        const shouldReconnect = (lastDisconnect?.error instanceof Boom) && lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut;
+        console.log('Connexion fermée, reconnexion:', shouldReconnect);
+        if(shouldReconnect) startBot();
+    } else if(connection === 'open') {
+        console.log('✅ Bot connecté à WhatsApp!');
+    }
+});
 
     sock.ev.on('messages.upsert', async ({ messages }) => {
         const msg = messages[0];
