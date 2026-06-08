@@ -39,7 +39,7 @@ if (fs.existsSync('clients.json')) {
 }
 
 async function startBot() {
-    const { state, saveCreds } = await useMultiFileAuthState('session_v2');
+    const { state, saveCreds } = await useMultiFileAuthState('session_v3');
     const sock = makeWASocket({
         auth: state,
         printQRInTerminal: false,
