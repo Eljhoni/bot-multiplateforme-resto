@@ -39,24 +39,19 @@ if (fs.existsSync('clients.json')) {
 }
 
 async function startBot() {
-        const { state, saveCreds } = await useMultiFileAuthState('session_v2');;
-       const sock = makeWASocket({ 
-     auth: state,
-     printQRInTerminal: false,
-             pairingCode: true
+    const { state, saveCreds } = await useMultiFileAuthState('session_v2');
+    const sock = makeWASocket({
+        auth: state,
+        printQRInTerminal: false,
+        pairingCode: true
     });
     if(!sock.authState.creds.registered) {
-                const code = await sock.requestPairingCode("243901173598");; // Mets ton numéro ici sans +
+        const code = await sock.requestPairingCode("243901173598");
         console.log('CODE PAIRING:', code);
     }
 
-
     sock.ev.on('connection.update', (update) => {
-        const { connection, lastDisconnect, qr } = update;
-        if(qr) {
-            console.log('QR CODE WHATSAPP :');
-            qrcode.generate(qr, {small: true});
-        }
+        const { connection, lastDisconnect } = update;
         if(connection === 'close') {
             const shouldReconnect = (lastDisconnect?.error instanceof Boom)?.output?.statusCode!== DisconnectReason.loggedOut;
             console.log('Connexion fermée, reconnexion:', shouldReconnect);
@@ -69,7 +64,7 @@ async function startBot() {
     sock.ev.on('messages.upsert', async ({ messages }) => {
         const msg = messages[0];
         if(!msg.message || msg.key.fromMe) return;
-        
+
         const sender = msg.key.remoteJid;
         const text = msg.message.conversation || msg.message.extendedTextMessage?.text || '';
         const textLower = text.toLowerCase().trim();
@@ -98,8 +93,8 @@ async function startBot() {
         }
 
         if(textLower === 'aide') {
-            await sock.sendMessage(sender, { 
-                text: `🆘 *AIDE BOT*\n──────────────\n📋 *Commandes:*\n• menu - Voir le menu\n• aide - Cette aide\n\n👉 Tape un numéro pour commander` 
+            await sock.sendMessage(sender, {
+                text: `🆘 *AIDE BOT*\n──────────────\n📋 *Commandes:*\n• menu - Voir le menu\n• aide - Cette aide\n\n👉 Tape un numéro pour commander`
             });
             return;
         }
@@ -107,11 +102,11 @@ async function startBot() {
         if(MENU[textLower]) {
             const item = MENU[textLower];
             commandes.set(sender, { item: item.nom, prix: item.prix, date: new Date() });
-            await sock.sendMessage(sender, { 
-                text: `✅ Commande enregistrée:\n${item.emoji} ${item.nom} - ${item.prix}$\n\nLe patron te contacte pour la livraison.` 
+            await sock.sendMessage(sender, {
+                text: `✅ Commande enregistrée:\n${item.emoji} ${item.nom} - ${item.prix}$\n\nLe patron te contacte pour la livraison.`
             });
-            await sock.sendMessage(NUMERO_PATRON, { 
-                text: `🔔 NOUVELLE COMMANDE\nDe: ${sender.split('@')[0]}\n${item.emoji} ${item.nom} - ${item.prix}$` 
+            await sock.sendMessage(NUMERO_PATRON, {
+                text: `🔔 NOUVELLE COMMANDE\nDe: ${sender.split('@')[0]}\n${item.emoji} ${item.nom} - ${item.prix}$`
             });
             return;
         }
@@ -132,4 +127,4 @@ function sauvegarderClients() {
     } catch (e) {
         console.log('Erreur sauvegarde:', e);
     }
-}
+            }
