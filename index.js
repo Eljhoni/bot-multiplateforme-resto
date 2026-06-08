@@ -39,14 +39,14 @@ if (fs.existsSync('clients.json')) {
 }
 
 async function startBot() {
-    const { state, saveCreds } = await useMultiFileAuthState('auth_info');
+        const { state, saveCreds } = await useMultiFileAuthState('session_v2');;
        const sock = makeWASocket({ 
      auth: state,
      printQRInTerminal: false,
              pairingCode: true
     });
     if(!sock.authState.creds.registered) {
-        const code = await sock.requestPairingCode("243901173598"); // Mets ton numéro ici sans +
+                const code = await sock.requestPairingCode("243901173598");; // Mets ton numéro ici sans +
         console.log('CODE PAIRING:', code);
     }
 
