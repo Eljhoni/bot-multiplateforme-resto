@@ -40,10 +40,16 @@ if (fs.existsSync('clients.json')) {
 
 async function startBot() {
     const { state, saveCreds } = await useMultiFileAuthState('auth_info');
-    const sock = makeWASocket({ 
-        auth: state, 
-        logger: pino({ level: 'silent' })
+       const sock = makeWASocket({ 
+     auth: state,
+     printQRInTerminal: false,
+             pairingCode: true
     });
+    if(!sock.authState.creds.registered) {
+        const code = await sock.requestPairingCode("243901173598"); // Mets ton numéro ici sans +
+        console.log('CODE PAIRING:', code);
+    }
+
 
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect, qr } = update;
